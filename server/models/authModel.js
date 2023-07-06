@@ -1,6 +1,8 @@
-const {model,Schema} = require('mongoose');
 
-const registerSchema = new Schema({
+import mongoose from "mongoose"
+
+
+const registerSchema = new mongoose.Schema({
      userName : {
           type : String,
           required : true
@@ -20,4 +22,6 @@ const registerSchema = new Schema({
      }
 },{timestamps : true});
 
-module.exports = model('user',registerSchema);
+
+const registerModel =mongoose.model('user',registerSchema);
+export default registerModel;

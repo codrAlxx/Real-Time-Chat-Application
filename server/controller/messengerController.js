@@ -1,7 +1,9 @@
-const User = require('../models/authModel');
-const messageModel = require('../models/messageModel');
-const formidable = require('formidable');
-const fs = require('fs');
+import mongoose from "mongoose"
+import User from "../models/authModel.js"
+import messageModel from "../models/messageModel.js";
+import formidable from "formidable";
+import fs from "fs"
+
 
 
 const getLastMessage = async(myId, fdId) => {
@@ -34,7 +36,7 @@ const getLastMessage = async(myId, fdId) => {
      return msg;
 }
 
-module.exports.getFriends = async (req, res) => {
+export const getFriends = async (req, res) => {
      const myId = req.myId;
      let fnd_msg = [];
      try{
@@ -64,7 +66,7 @@ module.exports.getFriends = async (req, res) => {
      } 
 }
 
-module.exports.messageUploadDB = async (req, res) =>{
+export const messageUploadDB = async (req, res) =>{
 
      const {
           senderName,
@@ -98,7 +100,7 @@ module.exports.messageUploadDB = async (req, res) =>{
 
      
 }
-module.exports.messageGet = async(req,res) => {
+export const messageGet = async(req,res) => {
      const myId = req.myId;
      const fdId = req.params.id;
 
@@ -147,7 +149,7 @@ module.exports.messageGet = async(req,res) => {
 }
 
 
-module.exports.ImageMessageSend = (req,res) => {
+export const ImageMessageSend = (req,res) => {
      const senderId = req.myId;
      const form = formidable();
 
@@ -200,7 +202,7 @@ module.exports.ImageMessageSend = (req,res) => {
      })
 }
 
-module.exports.messageSeen = async (req,res) => {
+export const messageSeen = async (req,res) => {
      const messageId = req.body._id;
 
      await messageModel.findByIdAndUpdate(messageId, {
@@ -220,7 +222,7 @@ module.exports.messageSeen = async (req,res) => {
 }
 
 
-module.exports.delivaredMessage = async (req,res) => {
+export const delivaredMessage = async (req,res) => {
      const messageId = req.body._id;
 
      await messageModel.findByIdAndUpdate(messageId, {

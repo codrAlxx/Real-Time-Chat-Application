@@ -27,7 +27,7 @@
              display: flex;
              align-items: flex-end;
              justify-content: flex-end;
-             width: 370px;
+             width: 550px;
              flex-direction: column;
              img.img,span{
                  width: 14px;
@@ -64,11 +64,12 @@
      }
      .fd-message{
          float:  left;
+        //  width: 50px;
          .fd-text{
-             display: flex;
+             display:flex;
              align-items: flex-end;
              justify-content: flex-start;
-             width: 370px;
+             width: 550px;
              .fd{
                  background-color: var(--fd-message-bg);
                  color: var(--text-color);
@@ -90,7 +91,7 @@
      }
  }
  .image-message-time,.image-message{
-     display: flex;
+     display:flex;
      img{
          width: 32px;
          height: 32px;

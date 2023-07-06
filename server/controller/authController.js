@@ -1,22 +1,24 @@
-const formidable = require('formidable');
-const validator = require('validator');
-const registerModel = require('../models/authModel');
-const fs = require('fs');
-const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
-const console = require('console');
- 
+import formidable from 'formidable';
+import validator from 'validator';
+import registerModel from "../models/authModel.js"
+import fs from "fs"
+import bcrypt from "bcrypt"
+import jwt from "jsonwebtoken";
 
-module.exports.userRegister = (req, res) => {
+import console from 'console';
+
+
+export const userRegister = (req, res) => {
 
      const form = formidable();
      form.parse(req, async (err, fields, files) => {
-
+     console.log({fields})
      const {
-          userName, email, password,confirmPassword
+          userName, email, password,confirmPassword,image
      } = fields;
 
-     const {image} = files;
+     // const {image} = files;
+     console.log(image)
      const error = [];
 
      if(!userName){
@@ -40,7 +42,7 @@ module.exports.userRegister = (req, res) => {
      if(password && password.length < 6){
           error.push('Please provide password mush be 6 charecter');
      }
-     if(Object.keys(files).length === 0){
+     if(image.length === 0){
           error.push('Please provide user image');
      }
      if(error.length > 0){
@@ -50,77 +52,75 @@ module.exports.userRegister = (req, res) => {
                }
           })
      } else {
-          const getImageName = files.image.originalFilename;
-          const randNumber = Math.floor(Math.random() * 99999 );
-          const newImageName = randNumber + getImageName;
-          files.image.originalFilename = newImageName;
-
-          const newPath = __dirname + `/../../frontend/public/image/${files.image.originalFilename}`;
+          // const getImageName = files.image.originalFilename;
+          // const randNumber = Math.floor(Math.random() * 99999 );
+          // const newImageName = randNumber + getImageName;
+          // files.image.originalFilename = newImageName;
+          console.log("I'm here 1");
+          console.log(error);
+          // const newPath = __dirname + `/../../frontend/public/image/${files.image.originalFilename}`;
 
      try {
+
+
           const checkUser = await registerModel.findOne({
                email:email
           });
           if(checkUser) {
+               console.log("I'm here 2");
+               console.log(checkUser);
                res.status(404).json({
                     error: {
                          errorMessage : ['Your email already exited']
                     }
                })
           }else{
-               fs.copyFile(files.image.filepath,newPath, async(error) => {
-                    if(!error) {
-                         const userCreate = await registerModel.create({
-                              userName,
-                              email,
-                              password : await bcrypt.hash(password,10),
-                              image: files.image.originalFilename
-                         });
+               // fs.copyFile(files.image.filepath,newPath, async(error) => {
+                    const userCreate = await registerModel.create({
+                         userName,
+                         email,
+                         password : await bcrypt.hash(password,10),
+                         image
+                    });
 
-                         const token = jwt.sign({
-                              id : userCreate._id,
-                              email: userCreate.email,
-                              userName: userCreate.userName,
-                              image: userCreate.image,
-                              registerTime : userCreate.createdAt
-                         }, process.env.SECRET,{
-                              expiresIn: process.env.TOKEN_EXP
-                         }); 
+                    const token = jwt.sign({
+                         id : userCreate._id,
+                         email: userCreate.email,
+                         userName: userCreate.userName,
+                         image: userCreate.image,
+                         registerTime : userCreate.createdAt
+                    }, "ASHDFKLAHSD2323",{
+                         expiresIn: "7d"
+                    }); 
 
-const options = { expires : new Date(Date.now() + process.env.COOKIE_EXP * 24 * 60 * 60 * 1000 )}
+                    const options = { expires : new Date(Date.now() + 7 * 24 * 60 * 60 * 1000 )}
 
-     res.status(201).cookie('authToken',token, options).json({
-          successMessage : 'Your Register Successful',token
-     })
+                    res.status(201).cookie('authToken',token, options).json({
+                         successMessage : 'Your Register Successful',token
+                    })
 
-                          
-                    } else {
-                         res.status(500).json({
-                              error: {
-                                   errorMessage : ['Interanl Server Error']
-                              }
-                         })
-                    }
-               })
+               // })
           }
 
-     } catch (error) {
-          res.status(500).json({
+          } catch (error) {
+               console.log("I'm here 4")
+               console.log(error);
+               res.status(500).json({
                error: {
-                    errorMessage : ['Interanl Server Error']
-               }
-          })
+                         errorMessage : ['Interanl Server Error']
+                    }
+               })
 
-           } 
+          } 
 
                
-          } 
+     } 
           
      }) // end Formidable  
     
 }
 
-module.exports.userLogin = async (req,res) => {
+export const userLogin = async (req,res) => {
       const error = [];
       const {email,password} = req.body;
       if(!email){
@@ -155,10 +155,10 @@ module.exports.userLogin = async (req,res) => {
                               userName: checkUser.userName,
                               image: checkUser.image,
                               registerTime : checkUser.createdAt
-                         }, process.env.SECRET,{
-                              expiresIn: process.env.TOKEN_EXP
+                         }, "ASHDFKLAHSD2323",{
+                              expiresIn: "7d"
                          }); 
-      const options = { expires : new Date(Date.now() + process.env.COOKIE_EXP * 24 * 60 * 60 * 1000 )}
+      const options = { expires : new Date(Date.now() + 7 * 24 * 60 * 60 * 1000 )}
 
      res.status(200).cookie('authToken',token, options).json({
           successMessage : 'Your Login Successful',token
@@ -192,7 +192,7 @@ module.exports.userLogin = async (req,res) => {
 
 }
 
-module.exports.userLogout = (req,res) => {
+export const userLogout = (req,res) => {
      res.status(200).cookie('authToken', '').json({
           success : true
      })

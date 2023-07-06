@@ -1,7 +1,10 @@
-const router = require('express').Router();
+import express from "express";
 
-const {getFriends,messageUploadDB,messageGet,ImageMessageSend,messageSeen,delivaredMessage} = require('../controller/messengerController');
-const { authMiddleware } = require('../middleware/authMiddleware');
+const router = express.Router()
+
+import {getFriends,messageUploadDB,messageGet,ImageMessageSend,messageSeen,delivaredMessage} from "../controller/messengerController.js"
+import { authMiddleware } from "../middleware/authMiddleware.js";
+
 
 router.get('/get-friends',authMiddleware, getFriends);
 router.post('/send-message',authMiddleware, messageUploadDB);
@@ -12,4 +15,4 @@ router.post('/seen-message',authMiddleware, messageSeen);
 router.post('/delivared-message',authMiddleware, delivaredMessage);
  
 
-module.exports = router;
+export default router;

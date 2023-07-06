@@ -1,7 +1,7 @@
-const mongoose = require('mongoose');
+import mongoose from "mongoose"
 
 const databaseConnect = () => {
-     mongoose.connect(process.env.DATABASE_URL,{
+     mongoose.connect("mongodb+srv://alok08jha:PVbFcrlx78s1xLHu@cluster0.3bgvpp6.mongodb.net/?retryWrites=true&w=majority",{
           useNewUrlParser : true,
           useUnifiedTopology : true
      }).then(()=>{
@@ -10,4 +10,4 @@ const databaseConnect = () => {
           console.log(error)
      })
 }
-module.exports = databaseConnect;
+export default databaseConnect;

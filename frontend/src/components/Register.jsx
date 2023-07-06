@@ -4,14 +4,14 @@ import {useDispatch,useSelector} from "react-redux"
 import { userRegister } from '../store/actions/authAction';
 import { useAlert } from 'react-alert';
 import { ERROR_CLEAR, SUCCESS_MESSAGE_CLEAR } from '../store/types/authType';
-
+import axios from 'axios';
 const Register = () => {
 
      const navigate = useNavigate();
      const alert = useAlert();
 
      const {loading,authenticate,error,successMessage,myInfo} = useSelector(state=>state.auth);
-     console.log(myInfo);
+     // console.log(myInfo);
 
      const dispatch = useDispatch();
 
@@ -22,7 +22,7 @@ const Register = () => {
           confirmPassword : '',
           image : ''
      })
-
+     const [avatar, setAvatar] = useState("");
      const [loadImage, setLoadImage] = useState('');
 
      const inputHendle = e => {
@@ -32,7 +32,32 @@ const Register = () => {
           })
      }
 
-     const fileHendle = e =>{
+     const fileHendle = async (e) =>{
+          const file = e.target.files[0];
+		const formData = new FormData();
+		formData.append("logo", file);
+		// setUploading(true);
+          console.log("File Change")
+		try {
+			const config = {
+				headers: {
+					"Content-Type": "multipart/form-data",
+				},
+			};
+               // console.log(file)
+			const { data } = await axios.patch(
+				"/api/upload",
+				formData,
+				config
+			);
+               
+			setAvatar(data);
+               console.log(avatar)
+			// setUploading(false);
+		} catch (error) {
+			// setUploading(false);
+               console.log("error")
+		}
           if(e.target.files.length !==0){
                setstate({
                     ...state,
@@ -58,8 +83,8 @@ const Register = () => {
           formData.append('email',email);
           formData.append('password',password);
           formData.append('confirmPassword',confirmPassword);
-          formData.append('image',image);
-
+          formData.append('image',avatar);
+          console.log({userName,email,password,confirmPassword, avatar})
           dispatch(userRegister(formData));          
      }
 
